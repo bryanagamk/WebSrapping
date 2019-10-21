@@ -12,19 +12,18 @@ products = soup.find_all("div", "product-item eec-data")
 names = []
 prices = []
 brands = []
+products_dict = []
 print(url)
 for item in products:
+    product_dict = dict()
     # print what you find
-    print("\n")
     name = item.find("p", "text-center title")
-    print(name)
     price = item.find("p", "text-center price")
-    print("\n")
-    print(price)
     brand = item['data-eec-brand'] 
-    print("\n")
-    print(brand)
-    # Store to variable
-    names.append(name)
-    prices.append(price)
-    brands.append(brand)
+
+    product_dict['name'] = name.text
+    product_dict['price'] = price.text
+    products_dict.append(dict(product_dict))
+
+print(products_dict)
+
