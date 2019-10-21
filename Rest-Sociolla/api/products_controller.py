@@ -8,6 +8,10 @@ from bs4 import BeautifulSoup
 
 parser = reqparse.RequestParser()
 parser.add_argument('url', type=str)
+parser.add_argument('id', type=int)
+parser.add_argument('brand', type=str)
+parser.add_argument('name', type=str)
+parser.add_argument('price', type=int)
 
 class Product(Resource):
 
@@ -38,12 +42,35 @@ class Product(Resource):
         return {"message" : "Inside get method of Product", "data" : listproduct},200
 
     def put(self):
+        args = parser.parse_args()
+        product = OProduct.query.get(args['id'])
+        product.brand = args['brand']
+        product.name = args['name']
+        product.price = args['price']
+        
+        db.session.commit()
+
+        listproduct = []
+        item = dict()
+        item['id'] = product.id
+        item['url'] = product.url
+        item['brand'] = product.brand
+        item['name'] = product.name
+        item['price'] = product.price
+        listproduct.append(item)
+
         logger.debug("Inside the put method of Product")
-        return {"message" : "Inside put method"},200
+        return {"message" : "Inside put method and success update data", "data" : listproduct},200
 
     def delete(self):
+        args = parser.parse_args()
+        product = OProduct.query.get(args['id'])
+        
+        db.session.delete(product)
+        db.session.commit()
+
         logger.debug("Inside the delete method of Product")
-        return {"message" : "Inside delete method"},200
+        return {"message" : "Inside delete method and success delete data"},200
 
 def get_product(url):
     response = requests.get(url)
